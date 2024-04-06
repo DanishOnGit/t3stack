@@ -5,7 +5,7 @@ import { Input } from "~/components/Input";
 
 
 const Signup=()=>{
-    return <div className="border border-gray-300 px-14 py-10 max-w-xl min-h rounded-3xl pb-28">
+    return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh ">
         <div className="flex flex-col items-center justify-center">
             <div className="mb-8">
                 <Heading title="Create your account"/>

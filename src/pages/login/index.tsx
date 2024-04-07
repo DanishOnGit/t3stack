@@ -8,8 +8,7 @@ import { api } from "~/utils/api";
 
 const Login=()=>{
     const [userDetails,setUserDetails]= useState({email:"",password:""});
-    const data = api.user.
-    
+
     const onChange=(e)=>{
         setUserDetails((prev)=>{
             return {...prev,[e.target.name]:e.target.value}

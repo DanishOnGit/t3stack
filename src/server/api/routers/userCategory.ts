@@ -5,14 +5,35 @@ const prisma = new PrismaClient()
 
 
 export const userCategoryRouter = createTRPCRouter({
-    addCategory:publicProcedure.input(z.object({userId:z.number(),categoryId:z.number()})).mutation(async({ctx,input})=>{
-       await prisma.userCategory.create({
-            data: {
+    updateCategory:publicProcedure.input(z.object({userId:z.number(),categoryId:z.number()})).mutation(async({ctx,input})=>{
+      const isExist = await prisma.userCategory.findFirst({
+        where:{
+          userId:input.userId,
+          categoryId:input.categoryId
+        }
+      });
+
+      if(isExist){
+        await prisma.userCategory.delete({
+          where:{
+            id:{     
               userId:input.userId,
               categoryId:input.categoryId
-            },
-          })
-          return "Successfully screated"
+            }
+          }
+        })
+        return "Successfully Deleted"
+      }else{
+        await prisma.userCategory.create({
+          data: {
+            userId:input.userId,
+            categoryId:input.categoryId
+          },
+        })
+        return "Successfully screated"
+      }
+
+      
     }),
     getUserCategories:publicProcedure.input(z.object({userId:z.number()})).query(async({input})=>{
       const data = await prisma.userCategory.findMany({

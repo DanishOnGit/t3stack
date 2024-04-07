@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useState } from "react";
 import { Button } from "~/components/Button";
 import { Heading } from "~/components/Heading";
@@ -9,6 +10,7 @@ import { api } from "~/utils/api";
 const Signup=()=>{
     const [userDetails,setUserDetails]= useState({name:"",email:"",password:""});
     const {mutate}=api.user.create.useMutation()
+    const router = useRouter()
 
     const onChange=(e)=>{
         setUserDetails((prev)=>{
@@ -19,6 +21,7 @@ const Signup=()=>{
     const createUser=async()=>{
         try {
            const data = await mutate(userDetails);
+           router.push('/verify')
            console.log({data})
         } catch (error) {
             console.error(error)

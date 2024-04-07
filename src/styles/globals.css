@@ -1,3 +1,17 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+
+.parent ul{
+    display: flex;
+    gap: 8px;
+}
+
+li.selected{
+    color: black;
+    font-weight: 600;
+}
+.pageNumber{
+    color: #ACACAC;
+}

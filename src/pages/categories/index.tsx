@@ -2,6 +2,7 @@ import { useRouter } from "next/router"
 import { useEffect, useState } from "react";
 import ReactPaginate from "react-paginate";
 import { Heading } from "~/components/Heading"
+import { Spinner } from "~/components/Spinner";
 import { api } from "~/utils/api";
 const itemsPerPage=6
 
@@ -30,8 +31,9 @@ const Category=({items,updateSelectedCategories,selectedCategories}:CategoryProp
     if(!items || !items.length) return null
 
     return items.map(item=><div>
-        <label onClick={(e)=>addToUserCategories(item.id)} key={item.id}>
-            <input type="checkbox" checked={isCategorySelected(item.id)} />
+        <label onClick={(e)=>addToUserCategories(item.id)} key={item.id} for={item.id}>
+            <input className="w-4 h-4 text-blue-600 bg-black border-black rounded focus:ring-blue-500 focus:ring-2 dark:bg-black dark:border-black dark:focus:ring-blue-600 dark:ring-offset-gray-800
+" type="checkbox" checked={isCategorySelected(item.id)} id={item.id} />
             {item.name}
         </label>
     </div>)
@@ -43,6 +45,8 @@ const Categories=()=>{
     const [itemOffset, setItemOffset] = useState(0);
     const [selectedCategories,setSelectedCategories]=useState([])
     const {data={},refetch} = api.category.getCategories.useQuery({offset:itemOffset},{enabled:false});
+    const [isLoading,setIsLoading]=useState(data?.data?false:true)
+    const [activePage,setActivePage]=useState(1)
     const router = useRouter()
     console.log({dataaaa:data})
 
@@ -62,11 +66,31 @@ const Categories=()=>{
 
     const handlePageClick = (event) => {
       const newOffset = (event.selected * itemsPerPage) % data.count;
+      setActivePage(event.selected)
       setItemOffset(newOffset);
     };
 
+    const getUserSelectedCategories=()=>{
+        try {
+            setIsLoading(true);
+
+        } catch (error) {
+            
+        }finally{
+            setIsLoading(false)
+        }
+    }
+
     useEffect(()=>{
-        refetch()
+        try{
+            setIsLoading(true)
+            refetch()
+            getUserSelectedCategories()
+        }catch(err){
+            console.log(err)
+        }finally{
+            setIsLoading(false)
+        }
     },[itemOffset])
 
     useEffect(()=>{
@@ -87,7 +111,8 @@ const Categories=()=>{
     </div>
     <div className="flex flex-col gap-8 mb-10 w-full">
         <p onClick={()=>mutate({name:"danny"})} className="text-xl font-lg">My saved interests!</p>
-        <Category items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>
+      {isLoading?<Spinner/>:  <Category items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>}
+      <div className="parent">
         <ReactPaginate
          breakLabel="..."
          nextLabel=">"
@@ -96,7 +121,9 @@ const Categories=()=>{
          pageCount={pageCount}
          previousLabel="<"
          renderOnZeroPageCount={null}
+         pageClassName="pageNumber"
         />
+      </div>
     </div>
 </div>
 }

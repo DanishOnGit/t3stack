@@ -17,6 +17,7 @@ const Category=({items,updateSelectedCategories,selectedCategories,selectedItems
     const {mutate} = api.userCategory.updateCategory.useMutation();
 
     const updateUserCategories=async(categoryId:number)=>{
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const {id} = JSON.parse(localStorage.getItem("user")) || {}
         try {
             const res = mutate({userId:id,categoryId});

@@ -49,10 +49,12 @@ const Login=()=>{
         <div className="flex flex-col gap-8 mb-10 w-full">
         <Input>
             <Input.InputLabel>Email</Input.InputLabel>
+            {/* @ts-ignore */}
             <Input.InputBox name="email" onChange={onChange}/>
         </Input>
         <Input>
             <Input.InputLabel>Password</Input.InputLabel>
+            {/* @ts-ignore */}
             <Input.InputBox name="password" onChange={onChange}/>
         </Input>
         </div>

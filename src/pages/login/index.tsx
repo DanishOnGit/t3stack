@@ -4,10 +4,12 @@ import { Button } from "~/components/Button";
 import { Heading } from "~/components/Heading";
 import { Input } from "~/components/Input";
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
 
 const Login=()=>{
     const [userDetails,setUserDetails]= useState({email:"",password:""});
+    const router =  useRouter()
     const {data,refetch} = api.user.getUser.useQuery({email:userDetails.email,password:userDetails.password},{enabled:false});
 
     const onChange=(e:any)=>{
@@ -23,6 +25,7 @@ const Login=()=>{
           localStorage.setItem("authToken",res.data.token)
           const userData = JSON.stringify(res.data.userDetails)
           localStorage.setItem("user",userData)
+          router.push("/categories")
         } catch (error) {
             console.error(error)
         }

@@ -8,16 +8,15 @@ const itemsPerPage=6
 
 type ItemType = {
     id:number,
-    name:string,
-    createdAt:Date,
-    updatedAt:Date
+    userId:number,
+    categoryId:number,
 };
 
-type CategoryProps<ItemType>={
-    items:[],
+type CategoryProps ={
+    items:any,
     updateSelectedCategories:()=>void,
-    selectedCategories:[],
-    selectedItems:[],
+    selectedCategories:number[],
+    selectedItems:ItemType[],
     refetchGetUserCategories:()=>void
 }
 const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:CategoryProps)=>{

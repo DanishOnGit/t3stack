@@ -12,8 +12,8 @@ const Category=({name}:{name:string})=>{
     </div>
 }
 const Categories=()=>{
-    const data = api.categories.getCategories.useQuery();
-    const {mutate}= api.categories.createCategory.useMutation()
+    const data = api.category.getCategories.useQuery();
+    const {mutate}= api.category.createCategory.useMutation()
 
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">
     <div className="flex flex-col items-center justify-center">

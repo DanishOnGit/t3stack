@@ -8,15 +8,21 @@ import { api } from "~/utils/api";
 
 const Login=()=>{
     const [userDetails,setUserDetails]= useState({email:"",password:""});
-    const onChange=(e:React.FormEvent<HTMLInputElement>)=>{
+    const {data,refetch} = api.user.getUser.useQuery({email:userDetails.email,password:userDetails.password},{enabled:false});
+
+    const onChange=(e:any)=>{
         setUserDetails((prev)=>{
             return {...prev,[e.target.name]:e.target.value}
         })
     }
 
-    const login=()=>{
+    const login=async()=>{
         try {
-            
+          const res = await refetch();
+          console.log({ressss:res})
+          localStorage.setItem("authToken",res.data.token)
+          const userData = JSON.stringify(res.data.userDetails)
+          localStorage.setItem("user",userData)
         } catch (error) {
             console.error(error)
         }
@@ -46,7 +52,7 @@ const Login=()=>{
         </Input>
         </div>
         <div className="w-full mb-12">
-            <Button text="Login"/>
+            <Button onClick={login} text="Login"/>
         </div>
         <div>
             <p className="flex gap-2 text-sm">

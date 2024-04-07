@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 
 export const categoryRouter = createTRPCRouter({
     createCategory:publicProcedure.input(z.object({name:z.string().min(1)})).mutation(async({ctx,input})=>{
-       await prisma.categories.create({
+       await prisma.category.create({
             data: {
               name:faker.commerce.product(),
             },
@@ -17,7 +17,7 @@ export const categoryRouter = createTRPCRouter({
     getCategories:publicProcedure.query(async({input})=>{
       const pageSize = 6;
       const offset = 1 * pageSize;
-      const data = await prisma.categories.findMany({
+      const data = await prisma.category.findMany({
         take:pageSize,
         skip:offset
       })

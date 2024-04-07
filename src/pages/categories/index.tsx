@@ -14,15 +14,26 @@ type CategoryProps<T>={
     refetchGetUserCategories:()=>void
 }
 const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:CategoryProps)=>{
-    const {mutate} = api.userCategory.updateCategory.useMutation();
+    const {mutate} = api.userCategory.addCategory.useMutation({
+        onSuccess: refetchGetUserCategories()
+    });
+    const {mutate:removeMutation}= api.userCategory.removeCategory.useMutation({
+        onSuccess: refetchGetUserCategories()
+    })
 
-    const updateUserCategories=async(categoryId:number)=>{
+    const updateUserCategories=(categoryId:number)=>{
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         const {id} = JSON.parse(localStorage.getItem("user")) || {}
         try {
-            const res = mutate({userId:id,categoryId});
+           const isExist= selectedCategories.find((num:number)=>num===categoryId);
+           if(isExist){
+              removeMutation({userId:id,categoryId});
+            
+           }else{
+               mutate({userId:id,categoryId});
+            }
             updateSelectedCategories(categoryId)
-            refetchGetUserCategories()
+            
         } catch (error) {
             console.error(error)
         }
@@ -35,7 +46,6 @@ const Category=({items,updateSelectedCategories,selectedCategories,selectedItems
     const isIdChecked=(id:number)=>{
         if(!selectedItems?.length) return false;
         const item = selectedItems.find(item=>item.categoryId===id)
-        console.log({selectedItems,id,item})
         return item ?true:false
     }
 
@@ -56,19 +66,16 @@ const Categories=()=>{
     const [itemOffset, setItemOffset] = useState(0);
     const [selectedCategories,setSelectedCategories]=useState([])
     const [userData,setUserData]=useState()
-    const {data={},refetch} = api.category.getCategories.useQuery({offset:itemOffset},{enabled:false});
-    const {data:dataForGetUserCategories,refetch:refetchGetUserCategories} = api.userCategory.getUserCategories.useQuery({userId:userData?.id},{enabled:false})
-    const [isLoading,setIsLoading]=useState(data?.data?false:true)
+    const {data={},refetch,isLoading:isAllCategoriesLoading} = api.category.getCategories.useQuery({offset:itemOffset},{enabled:false});
+    const {data:dataForGetUserCategories,refetch:refetchGetUserCategories,isRefetching,isLoading} = api.userCategory.getUserCategories.useQuery({userId:userData?.id},{enabled:false})
     const router = useRouter()
-    console.log({dataaaa:data})
 
     const pageCount = Math.ceil(data.count / itemsPerPage);
   
-    const updateSelectedCategories=(categoryId)=>{
-        console.log({categoryId,selectedCategories})
+    const updateSelectedCategories=(categoryId:number)=>{
         const doesExist= selectedCategories.find(cat=>cat===categoryId)
         if(doesExist){
-            console.log("hii");
+            console.log("removing...")
             const filtreddata= selectedCategories.filter(id=>id!==categoryId)
             setSelectedCategories(filtreddata)
         }else{
@@ -81,27 +88,8 @@ const Categories=()=>{
       setItemOffset(newOffset);
     };
 
-    const getUserSelectedCategories=()=>{
-        try {
-            setIsLoading(true);
-
-        } catch (error) {
-            
-        }finally{
-            setIsLoading(false)
-        }
-    }
-
     useEffect(()=>{
-        try{
-            setIsLoading(true)
-            refetch()
-            getUserSelectedCategories()
-        }catch(err){
-            console.log(err)
-        }finally{
-            setIsLoading(false)
-        }
+        refetch()
     },[itemOffset])
 
     useEffect(()=>{
@@ -117,6 +105,11 @@ const Categories=()=>{
         }
     },[userData?.id])
 
+    useEffect(()=>{
+        console.log("isfetched",dataForGetUserCategories)
+        setSelectedCategories(dataForGetUserCategories?.map(itm=>itm.categoryId))
+    },[JSON.stringify(dataForGetUserCategories)])
+
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">
     <div className="flex flex-col items-center justify-center">
         <div className="mb-8">
@@ -130,7 +123,7 @@ const Categories=()=>{
     </div>
     <div className="flex flex-col gap-8 mb-10 w-full">
         <p onClick={()=>mutate({name:"danny"})} className="text-xl font-lg font-semibold">My saved interests!</p>
-      {isLoading?<Spinner/>:  <Category refetchGetUserCategories={refetchGetUserCategories} selectedItems={dataForGetUserCategories} items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>}
+      {isLoading || isAllCategoriesLoading?<Spinner/>:  <Category refetchGetUserCategories={refetchGetUserCategories} selectedItems={dataForGetUserCategories} items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>}
       <div className="parent">
         <ReactPaginate
          breakLabel="..."

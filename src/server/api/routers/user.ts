@@ -8,7 +8,9 @@ export const userRouter = createTRPCRouter({
     create:publicProcedure.input(z.object({name:z.string().min(1),email:z.string().min(1),password:z.string().min(1)})).mutation(async({ctx,input})=>{
         await prisma.user.create({
             data: {
-              name: 'Furniture',
+              name: 'Danny',
+              email:"opop@op.co",
+              password:"hello@123"
             },
           })
     })

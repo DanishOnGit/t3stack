@@ -21,16 +21,17 @@ type CategoryProps ={
 }
 const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:{
     items:any,
-    updateSelectedCategories:()=>void,
+    updateSelectedCategories:(categoryId:number)=>void,
     selectedCategories:number[],
     selectedItems:ItemType[],
-    refetchGetUserCategories:()=>void
+    refetchGetUserCategories:()=>string
 })=>{
     const {mutate} = api.userCategory.addCategory.useMutation({
-        onSuccess: refetchGetUserCategories()
+        onSuccess: refetchGetUserCategories() as any
+        
     });
     const {mutate:removeMutation}= api.userCategory.removeCategory.useMutation({
-        onSuccess: refetchGetUserCategories()
+        onSuccess: refetchGetUserCategories() as any
     })
 
     const updateUserCategories=(categoryId:number)=>{
@@ -145,6 +146,7 @@ const Categories=()=>{
     </div>
     <div className="flex flex-col gap-8 mb-10 w-full">
         <p onClick={()=>mutate({name:"danny"})} className="text-xl font-lg font-semibold">My saved interests!</p>
+        {/* @ts-ignore */}
       {isLoading || isAllCategoriesLoading?<Spinner/>:  <Category refetchGetUserCategories={refetchGetUserCategories} selectedItems={dataForGetUserCategories} items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>}
       <div className="parent">
         <ReactPaginate

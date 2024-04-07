@@ -6,11 +6,18 @@ import { Spinner } from "~/components/Spinner";
 import { api } from "~/utils/api";
 const itemsPerPage=6
 
-type CategoryProps<T>={
-    items:T[],
+type ItemType = {
+    id:number,
+    name:string,
+    createdAt:Date,
+    updatedAt:Date
+};
+
+type CategoryProps<ItemType>={
+    items:[],
     updateSelectedCategories:()=>void,
-    selectedCategories:T[],
-    selectedItems:T[],
+    selectedCategories:[],
+    selectedItems:[],
     refetchGetUserCategories:()=>void
 }
 const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:CategoryProps)=>{

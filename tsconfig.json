@@ -11,7 +11,7 @@
     "noUnusedParameters": false,
 
     /* Strictness */
-    "strict": false,
+    "strict": true,
     "noUncheckedIndexedAccess": true,
     "checkJs": true,
 

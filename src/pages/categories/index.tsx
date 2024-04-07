@@ -23,8 +23,9 @@ const Category=({items,updateSelectedCategories,selectedCategories,selectedItems
 
     const updateUserCategories=(categoryId:number)=>{
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const {id} = JSON.parse(localStorage.getItem("user")) || {}
+        const {id} = JSON.parse(localStorage.getItem("user") || "") || {}
         try {
+            console.log({selectedCategories,categoryId})
            const isExist= selectedCategories.find((num:number)=>num===categoryId);
            if(isExist){
               removeMutation({userId:id,categoryId});
@@ -40,18 +41,20 @@ const Category=({items,updateSelectedCategories,selectedCategories,selectedItems
     }
 
     const isCategorySelected = (categoryId:number)=>{
-        return selectedCategories.find(id=>id===categoryId)?true:false
+        return selectedCategories.find((id:number)=>id===categoryId)?true:false
     } 
 
     const isIdChecked=(id:number)=>{
         if(!selectedItems?.length) return false;
-        const item = selectedItems.find(item=>item.categoryId===id)
+        const item = selectedItems.find((item:any)=>item.categoryId===id)
         return item ?true:false
     }
 
+    // eslint-disable-next-line @typescript-eslint/prefer-optional-chain
     if(!items || !items.length) return null
 
-    return items.map(item=><div className="flex gap-4 font-md">
+    return items.map((item:any )=><div key={item.id} className="flex gap-4 font-md">
+         {/* @ts-ignore */}
         <label onClick={(e)=>updateUserCategories(item.id)} key={item.id} for={item.id}>
             <input className="mr-4 accent-black w-4 h-4 text-black bg-black border-black rounded focus:ring-black focus:ring-2 dark:bg-black dark:border-black dark:focus:ring-black dark:ring-offset-gray-800
 " type="checkbox" checked={isCategorySelected(item.id) || isIdChecked(item.id)} id={item.id} />
@@ -67,9 +70,10 @@ const Categories=()=>{
     const [selectedCategories,setSelectedCategories]=useState([])
     const [userData,setUserData]=useState()
     const {data={},refetch,isLoading:isAllCategoriesLoading} = api.category.getCategories.useQuery({offset:itemOffset},{enabled:false});
-    const {data:dataForGetUserCategories,refetch:refetchGetUserCategories,isRefetching,isLoading} = api.userCategory.getUserCategories.useQuery({userId:userData?.id},{enabled:false})
+    // @ts-ignore
+    const {data:dataForGetUserCategories,refetch:refetchGetUserCategories,isLoading,isSuccess,isFetching} = api.userCategory.getUserCategories.useQuery({userId:userData?.id},{enabled:false})
     const router = useRouter()
-
+// @ts-ignore
     const pageCount = Math.ceil(data.count / itemsPerPage);
   
     const updateSelectedCategories=(categoryId:number)=>{
@@ -79,11 +83,13 @@ const Categories=()=>{
             const filtreddata= selectedCategories.filter(id=>id!==categoryId)
             setSelectedCategories(filtreddata)
         }else{
+            // @ts-ignore
             setSelectedCategories(prev=>([...prev,categoryId]))
         }
     }
-
+// @ts-ignore
     const handlePageClick = (event) => {
+        // @ts-ignore
       const newOffset = (event.selected * itemsPerPage) % data.count;
       setItemOffset(newOffset);
     };
@@ -95,20 +101,24 @@ const Categories=()=>{
     useEffect(()=>{
         const isAuthenticated= localStorage.getItem("authToken");
         if(!isAuthenticated) router.push("/login");
-        const userData = JSON.parse(localStorage.getItem("user")) || {};
+        
+        const userData = JSON.parse(localStorage.getItem("user") || "") || {};
         setUserData(userData)
     },[])
 
     useEffect(()=>{
+        // @ts-ignore
         if(userData?.id){
             refetchGetUserCategories()
         }
+        // @ts-ignore
     },[userData?.id])
 
-    useEffect(()=>{
-        console.log("isfetched",dataForGetUserCategories)
-        setSelectedCategories(dataForGetUserCategories?.map(itm=>itm.categoryId))
-    },[JSON.stringify(dataForGetUserCategories)])
+    // useEffect(()=>{
+    //     console.log("isfetched",dataForGetUserCategories)
+    //     setSelectedCategories(dataForGetUserCategories?.map(itm=>itm.categoryId))
+    // },[JSON.stringify(dataForGetUserCategories)])
+
 
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">
     <div className="flex flex-col items-center justify-center">

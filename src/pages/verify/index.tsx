@@ -10,9 +10,9 @@ const VerifyEmail=()=>{
     const [otp, setOtp] = useState('');
     const router =  useRouter()
 
-    const verifyMail=()=>{
+    const verifyMail=async()=>{
         if(otp==="12345678"){
-            router.push("/login")
+            await router.push("/login")
         }
     }
 

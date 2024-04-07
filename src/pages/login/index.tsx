@@ -22,7 +22,9 @@ const Login=()=>{
         try {
           const res = await refetch();
           console.log({ressss:res})
+          // @ts-ignore
           localStorage.setItem("authToken",res.data.token)
+          // @ts-ignore
           const userData = JSON.stringify(res.data.userDetails)
           localStorage.setItem("user",userData)
           router.push("/categories")

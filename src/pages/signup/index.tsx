@@ -12,7 +12,7 @@ const Signup=()=>{
     const {mutate}=api.user.create.useMutation()
     const router = useRouter()
 
-    const onChange=(e)=>{
+    const onChange=(e:any)=>{
         setUserDetails((prev)=>{
             return {...prev,[e.target.name]:e.target.value}
         })
@@ -20,7 +20,7 @@ const Signup=()=>{
 
     const createUser=async()=>{
         try {
-           const data = await mutate(userDetails);
+           const data = mutate(userDetails);
            router.push('/verify')
            console.log({data})
         } catch (error) {
@@ -35,14 +35,17 @@ const Signup=()=>{
         <div className="flex flex-col gap-8 mb-10 w-full">
         <Input>
             <Input.InputLabel>Name</Input.InputLabel>
+             {/* @ts-ignore */}
             <Input.InputBox name="name" onChange={onChange}/>
         </Input>
         <Input>
             <Input.InputLabel>Email</Input.InputLabel>
+            {/* @ts-ignore */}
             <Input.InputBox name="email" onChange={onChange}/>
         </Input>
         <Input>
             <Input.InputLabel>Password</Input.InputLabel>
+            {/* @ts-ignore */}
             <Input.InputBox name="password" onChange={onChange}/>
         </Input>
         </div>

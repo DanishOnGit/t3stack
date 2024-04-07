@@ -19,7 +19,13 @@ type CategoryProps ={
     selectedItems:ItemType[],
     refetchGetUserCategories:()=>void
 }
-const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:CategoryProps)=>{
+const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:{
+    items:any,
+    updateSelectedCategories:()=>void,
+    selectedCategories:number[],
+    selectedItems:ItemType[],
+    refetchGetUserCategories:()=>void
+})=>{
     const {mutate} = api.userCategory.addCategory.useMutation({
         onSuccess: refetchGetUserCategories()
     });

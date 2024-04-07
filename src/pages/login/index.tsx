@@ -5,6 +5,7 @@ import { Input } from "~/components/Input";
 
 
 const Login=()=>{
+
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">
         <div className="flex flex-col items-center justify-center">
             <div className="mb-8">

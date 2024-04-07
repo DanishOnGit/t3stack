@@ -35,7 +35,7 @@ const Login=()=>{
             <p className="flex gap-2 text-sm">
                 Don’t have an Account? 
             <span className="font-semibold">
-                <Link href={'/login'}>
+                <Link href={'/signup'}>
                     SIGN UP
                 </Link>
             </span>

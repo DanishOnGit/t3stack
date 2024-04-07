@@ -16,5 +16,19 @@ export const userRouter = createTRPCRouter({
             },
           });
           return data
+    }),
+    getUser:publicProcedure.input(z.object({email:z.string().min(1),password:z.string().min(1)})).query(async({input})=>{
+      try {
+        
+      } catch (error) {
+        console.error('Error logging in:', error);
+        throw error;
+      }
+      const res = await prisma.user.findUnique({
+        where:{
+          email:input.email
+        }
+      });
+      if(!res) return "No such Email found!"
     })
 })

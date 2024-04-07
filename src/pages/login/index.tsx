@@ -1,16 +1,27 @@
+import { useState } from "react";
 import Link from "next/link";
 import { Button } from "~/components/Button";
 import { Heading } from "~/components/Heading";
 import { Input } from "~/components/Input";
+import { api } from "~/utils/api";
 
 
 const Login=()=>{
     const [userDetails,setUserDetails]= useState({email:"",password:""});
-
+    const data = api.user.
+    
     const onChange=(e)=>{
         setUserDetails((prev)=>{
             return {...prev,[e.target.name]:e.target.value}
         })
+    }
+
+    const login=()=>{
+        try {
+            
+        } catch (error) {
+            console.error(error)
+        }
     }
 
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">

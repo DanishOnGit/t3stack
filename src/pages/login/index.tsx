@@ -5,6 +5,13 @@ import { Input } from "~/components/Input";
 
 
 const Login=()=>{
+    const [userDetails,setUserDetails]= useState({email:"",password:""});
+
+    const onChange=(e)=>{
+        setUserDetails((prev)=>{
+            return {...prev,[e.target.name]:e.target.value}
+        })
+    }
 
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">
         <div className="flex flex-col items-center justify-center">
@@ -22,11 +29,11 @@ const Login=()=>{
         <div className="flex flex-col gap-8 mb-10 w-full">
         <Input>
             <Input.InputLabel>Email</Input.InputLabel>
-            <Input.InputBox/>
+            <Input.InputBox name="email" onChange={onChange}/>
         </Input>
         <Input>
             <Input.InputLabel>Password</Input.InputLabel>
-            <Input.InputBox/>
+            <Input.InputBox name="password" onChange={onChange}/>
         </Input>
         </div>
         <div className="w-full mb-12">

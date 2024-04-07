@@ -8,8 +8,7 @@ import { api } from "~/utils/api";
 
 const Login=()=>{
     const [userDetails,setUserDetails]= useState({email:"",password:""});
-
-    const onChange=(e)=>{
+    const onChange=(e:React.FormEvent<HTMLInputElement>)=>{
         setUserDetails((prev)=>{
             return {...prev,[e.target.name]:e.target.value}
         })

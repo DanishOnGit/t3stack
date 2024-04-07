@@ -9,16 +9,19 @@ const itemsPerPage=6
 type CategoryProps<T>={
     items:T[],
     updateSelectedCategories:()=>void,
-    selectedCategories:T[]
+    selectedCategories:T[],
+    selectedItems:T[],
+    refetchGetUserCategories:()=>void
 }
-const Category=({items,updateSelectedCategories,selectedCategories}:CategoryProps)=>{
+const Category=({items,updateSelectedCategories,selectedCategories,selectedItems,refetchGetUserCategories}:CategoryProps)=>{
     const {mutate} = api.userCategory.updateCategory.useMutation();
 
-    const addToUserCategories=async(categoryId:number)=>{
+    const updateUserCategories=async(categoryId:number)=>{
         const {id} = JSON.parse(localStorage.getItem("user")) || {}
         try {
             const res = mutate({userId:id,categoryId});
             updateSelectedCategories(categoryId)
+            refetchGetUserCategories()
         } catch (error) {
             console.error(error)
         }
@@ -28,12 +31,19 @@ const Category=({items,updateSelectedCategories,selectedCategories}:CategoryProp
         return selectedCategories.find(id=>id===categoryId)?true:false
     } 
 
+    const isIdChecked=(id:number)=>{
+        if(!selectedItems?.length) return false;
+        const item = selectedItems.find(item=>item.categoryId===id)
+        console.log({selectedItems,id,item})
+        return item ?true:false
+    }
+
     if(!items || !items.length) return null
 
-    return items.map(item=><div>
-        <label onClick={(e)=>addToUserCategories(item.id)} key={item.id} for={item.id}>
-            <input className="w-4 h-4 text-blue-600 bg-black border-black rounded focus:ring-blue-500 focus:ring-2 dark:bg-black dark:border-black dark:focus:ring-blue-600 dark:ring-offset-gray-800
-" type="checkbox" checked={isCategorySelected(item.id)} id={item.id} />
+    return items.map(item=><div className="flex gap-4 font-md">
+        <label onClick={(e)=>updateUserCategories(item.id)} key={item.id} for={item.id}>
+            <input className="mr-4 accent-black w-4 h-4 text-black bg-black border-black rounded focus:ring-black focus:ring-2 dark:bg-black dark:border-black dark:focus:ring-black dark:ring-offset-gray-800
+" type="checkbox" checked={isCategorySelected(item.id) || isIdChecked(item.id)} id={item.id} />
             {item.name}
         </label>
     </div>)
@@ -44,21 +54,22 @@ const Categories=()=>{
     const {mutate}= api.category.createCategory.useMutation()
     const [itemOffset, setItemOffset] = useState(0);
     const [selectedCategories,setSelectedCategories]=useState([])
+    const [userData,setUserData]=useState()
     const {data={},refetch} = api.category.getCategories.useQuery({offset:itemOffset},{enabled:false});
+    const {data:dataForGetUserCategories,refetch:refetchGetUserCategories} = api.userCategory.getUserCategories.useQuery({userId:userData?.id},{enabled:false})
     const [isLoading,setIsLoading]=useState(data?.data?false:true)
-    const [activePage,setActivePage]=useState(1)
     const router = useRouter()
     console.log({dataaaa:data})
 
-    const endOffset = itemOffset + itemsPerPage;
     const pageCount = Math.ceil(data.count / itemsPerPage);
   
     const updateSelectedCategories=(categoryId)=>{
+        console.log({categoryId,selectedCategories})
         const doesExist= selectedCategories.find(cat=>cat===categoryId)
         if(doesExist){
-            setSelectedCategories((prev)=>{
-                return prev.filter(id=>id!==categoryId)
-            })
+            console.log("hii");
+            const filtreddata= selectedCategories.filter(id=>id!==categoryId)
+            setSelectedCategories(filtreddata)
         }else{
             setSelectedCategories(prev=>([...prev,categoryId]))
         }
@@ -66,7 +77,6 @@ const Categories=()=>{
 
     const handlePageClick = (event) => {
       const newOffset = (event.selected * itemsPerPage) % data.count;
-      setActivePage(event.selected)
       setItemOffset(newOffset);
     };
 
@@ -95,8 +105,16 @@ const Categories=()=>{
 
     useEffect(()=>{
         const isAuthenticated= localStorage.getItem("authToken");
-        if(!isAuthenticated) router.push("/login")
+        if(!isAuthenticated) router.push("/login");
+        const userData = JSON.parse(localStorage.getItem("user")) || {};
+        setUserData(userData)
     },[])
+
+    useEffect(()=>{
+        if(userData?.id){
+            refetchGetUserCategories()
+        }
+    },[userData?.id])
 
     return <div className="border border-gray-300 px-14 py-10 max-w-xl rounded-3xl max-h-dvh mx-auto ">
     <div className="flex flex-col items-center justify-center">
@@ -110,8 +128,8 @@ const Categories=()=>{
         </div>
     </div>
     <div className="flex flex-col gap-8 mb-10 w-full">
-        <p onClick={()=>mutate({name:"danny"})} className="text-xl font-lg">My saved interests!</p>
-      {isLoading?<Spinner/>:  <Category items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>}
+        <p onClick={()=>mutate({name:"danny"})} className="text-xl font-lg font-semibold">My saved interests!</p>
+      {isLoading?<Spinner/>:  <Category refetchGetUserCategories={refetchGetUserCategories} selectedItems={dataForGetUserCategories} items={data?.data} updateSelectedCategories={updateSelectedCategories} selectedCategories={selectedCategories}/>}
       <div className="parent">
         <ReactPaginate
          breakLabel="..."

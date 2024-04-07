@@ -16,10 +16,7 @@ export const userCategoryRouter = createTRPCRouter({
       if(isExist){
         await prisma.userCategory.delete({
           where:{
-            id:{     
-              userId:input.userId,
-              categoryId:input.categoryId
-            }
+            id: isExist.id
           }
         })
         return "Successfully Deleted"

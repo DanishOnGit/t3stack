@@ -36,7 +36,7 @@ const Category=({items,updateSelectedCategories,selectedCategories,selectedItems
 
     const updateUserCategories=(categoryId:number)=>{
         // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-        const {id} = JSON.parse(localStorage.getItem("user") || "") || {}
+        const {id} = JSON.parse(localStorage.getItem("user") ?? "") ?? {}
         try {
             console.log({selectedCategories,categoryId})
            const isExist= selectedCategories.find((num:number)=>num===categoryId);
@@ -115,7 +115,7 @@ const Categories=()=>{
         const isAuthenticated= localStorage.getItem("authToken");
         if(!isAuthenticated) router.push("/login");
         
-        const userData = JSON.parse(localStorage.getItem("user") || "") || {};
+        const userData = JSON.parse(localStorage.getItem("user") ?? "") ?? {};
         setUserData(userData)
     },[])
 
